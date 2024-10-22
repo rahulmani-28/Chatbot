@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChaChaBot</title>   
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+    $(document).ready(function(){
+        $('#chat_form').on('submit', function(e) {
+            e.preventDefault();  // Prevent form from being submitted normally
+            var user_input = $('#user_input').val();
+            $.ajax({
+                url: '/',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({input_text: user_input}),
+                success: function(response) {
+                    $('#chat_history').append('<p>User: ' + user_input + '</p>');
+                    $('#chat_history').append('<p>Chatbot: ' + response.response + '</p>');
+                    $('#user_input').val('');  // Clear input field
+                },
+                error: function(response) {
+                    $('#chat_history').append('<p>Error: ' + response.responseJSON.error + '</p>');
+                }
+            });
+        });
+    });
+    </script>                                    
+    <link rel="stylesheet" href="styles.css">
+    <link rel="icon" href="chacha.jpg" type="image/x-icon">
+    <style>
+        body {
+font-family: droid 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+margin: 0;
+padding: 0;
+background-color: rgb(72, 77, 87);
+
+} 
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 400;
+    font-size: 100%;
+    background: #3b3b3b;
+}
+
+*, html {
+    --primaryGradient: linear-gradient(93.12deg, #111111 0.52%, #2f2f2f 100%);
+    --secondaryGradient: linear-gradient(268.91deg, #050206 -2.14%, #3b3b3b 99.69%);
+    --primaryBoxShadow: 0px 10px 15px rgba(0, 0, 0, 0.1);
+    --secondaryBoxShadow: 0px -10px 15px rgba(0, 0, 0, 0.1);
+    --primary: #581B98;
+}
+
+/* CHATBOX
+=============== */
+.chatbox {
+    position: absolute;
+    bottom: 30px;
+    right: 50px;
+}
+
+/* CONTENT IS CLOSE */
+.chatbox__support {
+    display: flex;
+    flex-direction: column;
+    background: #eee;
+    z-index: -123456;
+    /* opacity: 0; */
+    transition: all .5s ease-in-out;
+}
+
+/* CONTENT ISOPEN */
+.chatbox--active {
+    transform: translateY(-40px);
+    z-index: 123456;
+    opacity: 1;
+
+}
+
+/* BUTTON */
+/* .chatbox__button {
+    text-align: right;
+} */
+
+.send__button {
+    padding: 6px;
+    background: transparent;
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+
+/* HEADER */
+.chatbox__header {
+    position: sticky;
+    top: 0;
+    background: orange;
+}
+
+/* MESSAGES */
+.chatbox__messages {
+    margin-top: auto;
+    display: flex;
+    overflow-y: scroll;
+    flex-direction: column;
+}
+
+.messages__item {
+    background: orange;
+    max-width: 60.6%;
+    width: fit-content;
+}
+
+.messages__item--operator {
+    margin-left: auto;
+}
+
+.messages__item--visitor {
+    margin-right: auto;
+}
+
+/* FOOTER */
+.chatbox__footer {
+    position: sticky;
+    bottom: 0;
+}
+
+.chatbox__support {
+    background: #f9f9f9;
+    height: 510px;
+    width: 750px;
+    box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.1);
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius:13px ;
+    border-bottom-right-radius:13px ;
+}
+
+
+.chatbox__header {
+    background: var(--primaryGradient);
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 15px 20px;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    box-shadow: var(--primaryBoxShadow);
+}
+
+.chatbox__image--header {
+    margin-right: 10px;
+}
+
+.chatbox__heading--header {
+    font-size: 1.2rem;
+    color: #ffcb74;
+}
+
+.chatbox__description--header {
+    font-size: .9rem;
+    color: #ffcb74;
+}
+
+/* Messages */
+.chatbox__messages {
+    padding: 0 20px;
+}
+
+.messages__item {
+    margin-top: 10px;
+    background: #E0E0E0;
+    padding: 8px 12px;
+    max-width: 70%;
+}
+
+.messages__item--visitor,
+.messages__item--typing {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+}
+
+.messages__item--operator {
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background: var(--primary);
+    color: white;
+}
+
+/* FOOTER */
+.chatbox__footer {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 20px;
+    background: var(--secondaryGradient);
+    box-shadow: var(--secondaryBoxShadow);
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    margin-top: 20px;
+}
+
+.chatbox__footer input {
+    width: 80%;
+    border: none;
+    padding: 10px 10px;
+    border-radius: 30px;
+    text-align: left;
+}
+
+.chatbox__send--footer {
+    color: white;
+}
+
+
+nav {
+background:transparent;
+display: flex;
+align-items: auto;
+justify-content: space-between;
+border-radius: 10px ;
+}
+
+nav ul{
+    padding: 23px 54px;
+}
+nav ul li {
+list-style: none;
+display: inline-block;
+padding: 10px 20px;  
+}
+
+nav ul li a {
+color: #f9f9fc;
+padding: 0px 0;
+text-decoration: none;
+}
+
+.chacha{
+    color:#ffcb74;
+    font-size: x-large;
+}
+.nav-text:hover {
+color:  #ffcb74;
+
+}
+.nav-text::after{
+content: "";
+display: block;
+height: 3px;
+background-color: #ffcb74;
+width: 0;
+border-radius: 20%;
+transition:width 0.3s ease;
+
+}
+.nav-text:hover::after {
+animation: underline 0.5s forwards;
+
+}
+
+.login{
+    border:1px solid #ffcb74;
+    background: #ffcb74;
+    border-radius: 12px;
+    position: absolute;
+    right: 1vw;
+    margin-top: 1px;
+
+}
+.center-text {
+font-size: 120px;
+position: absolute;
+top: 24vh;
+color: #f6f6f6;    
+}
+
+
+.center-text p{
+text-align: left;
+top: 70%;
+left: 30%;
+font-size: 2.5rem;
+}
+
+
+.logo{
+position: absolute;
+top: 20%;
+left: 20px; 
+transform: translateY(-50%);
+border-radius: 10px;
+size: 2;
+}
+
+.input-container {
+display: flex;
+padding: 10px;
+}
+
+input {
+flex-grow: 1;
+padding: 8px;
+border: 1px solid #ddd;
+border-radius: 33px;
+}
+
+button {
+padding: 10px 15px;
+background-color: #ffffff;
+color: #050206;
+border: none;
+border-radius: 12px;
+cursor: pointer;
+margin-left: 10px;
+transition: background-color 0.3s ease-in-out;
+}
+button:hover {
+background-color: #ffcb74;
+}
+
+.user-message,
+.bot-message {
+display: flex;
+align-items: first baseline;
+margin-bottom: 10px;
+
+}
+
+.user-message img,
+.bot-message img {
+max-width: 50px;
+border-radius: 50%;
+margin-right: 10px;
+}
+.header-bar {
+background-color:rgb(0,0,0);
+color: #34943f;
+padding: 10px;
+text-align: center;
+font-size: 24px;
+}
+
+
+
+@media (max-width:600px){
+.center-text{
+    font-size: 2rem;
+}
+
+}
+@media (max-width:768px){
+.center-text{
+    font-size: 2rem;
+}
+}
+@keyframes underline {
+    0%{
+        width: 0;
+    }
+    100%{
+        width: 100%;
+    }
+}
+
+
+    </style>
+</head>
+<body>
+       
+        <nav>
+            <ul>
+                <li class="chacha"><a class="nav-text" href="home">Chacha-Bot</a></li>
+                <li><a class="nav-text"href="">Home</a></li>
+                <li><a class="nav-text"href="https://nmcg.nic.in/NamamiGanga.aspx">About</a></li>
+                <li><a class="nav-text"href="https://twitter.com/cleanganganmcg">Twitter</a></li>
+                <li><a class="nav-text"href="https://www.instagram.com/namamigange/">Instagram</a></li>
+                <li class="login"><a href="login">login</a></li>
+                <li class="login"><a href="signup">Signup</a></li>
+            </ul>
+        </nav>
+
+    <div class="center-text"> 
+        <p>Hey, this is Chacha Chaudhary!</p>
+        <p>How can I help you?</p>
+    </div>
+    
+   
+    <div class="container">
+        <div class="chatbox">
+            <div class="chatbox__support">
+                <div class="chatbox__header">
+                    <div class="chatbox__image--header">
+                        <img src="https://img.icons8.com/color/48/000000/circled-user-male-skin-type-5--v1.png" alt="image">
+                    </div>
+                    <div class="chatbox__content--header">
+                        <h4 class="chatbox__heading--header">ChaChaBot</h4>
+                        <p class="chatbox__description--header">Hello there!! How can I help you?</p>
+                    </div>
+                </div>
+                <div class="chatbox__messages" id="chat-container">
+                    <div></div>
+                </div>
+                <div class="chatbox__footer">
+                    <input type="text" placeholder="Write a message..." id="message-input">
+                    <button class="chatbox_send--footer send_button" onclick="sendMessage()">Send</button>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+   <script>
+    function sendMessage() {
+        var messageinput = $('#message-input').val();
+        $('#chat-container').append('<p class="user-message"><img src="/static/images/user.png"> ' + messageinput + '</p>');
+        var tempBotMessage = $('<p class="bot-message"><img src="/static/images/bot.png"> Getting your answer...</p>');
+$('#chat-container').append(tempBotMessage);
+
+
+$.ajax({
+    url: '/',
+    method: 'POST',
+    contentType: 'application/json',
+    data: JSON.stringify({input_text: messageinput}),
+    success: function(response) {
+        tempBotMessage.replaceWith('<p class="bot-message"><img src="/static/images/bot.png"> ' + response.response + '</p>');
+        $('#message-input').val('');  
+    },
+    error: function(response) {
+        $('#chat-container').append('<p>Error: ' + response.responseJSON.error + '</p>');
+    }
+});
+    }
+    
+   </script>
+</body>
+</html>
